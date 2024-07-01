@@ -25,6 +25,18 @@ app.get('/api/bug', (req, res) => {
     })
 })
 
+app.get('/api/bug/save', (req, res) => {
+    const bugToSave = {
+        _id: req.query._id,
+        title: req.query.title,
+        description: req.query.description,
+        severity: +req.query.severity, 
+        
+
+
+    }
+})
+
 const port = 3030
 
 app.listen(port, () => console.log(`Server ready at port http://127.0.0.1:${port}/`))
