@@ -3,11 +3,11 @@ import { utilService } from './util.service.js'
 
 const STORAGE_KEY = 'bugDB'
 
-_createBugs()
+// _createBugs()
 
 export const bugService = {
   query,
-  getById,
+  get,
   save,
   remove,
   getEmptyBug,
@@ -29,7 +29,7 @@ function query(filterBy = {}) {
 }
 
 
-function getById(bugId) {
+function get(bugId) {
   return storageService.get(STORAGE_KEY, bugId)
   .then(bug => _setNextPrevBugId(bug))
 }
@@ -83,50 +83,50 @@ function getFilterFromSearchParams(searchParams) {
 // }
 
 
-function _createBugs() {
-  let bugs = utilService.loadFromStorage(STORAGE_KEY)
-  if (!bugs || !bugs.length) {
-    bugs = [
-      {
-        title: 'Infinite Loop Detected',
-        description: 'Problem in detected',
-        severity: 4,
-        _id: '1NF1N1T3',
-        createdAt: 1719851845,
-      },
-      {
-        title: 'Keyboard Not Found',
-        description: 'Problem with keyboard not found',
-        severity: 3,
-        _id: 'K3YB0RD',
-        createdAt: 1719851884,
-      },
-      {
-        title: '404 Coffee Not Found',
-        description: 'Problem 404 coffee not found',
-        severity: 2,
-        _id: 'C0FF33',
-        createdAt: 1719851884,
-      },
-      {
-        title: 'Unexpected Response',
-        description: 'Problem with unexpected Response',
-        severity: 1,
-        _id: 'G0053',
-        createdAt: 1719851925,
-      },
-    ]
-    utilService.saveToStorage(STORAGE_KEY, bugs)
-  }
-}
+// function _createBugs() {
+//   let bugs = utilService.loadFromStorage(STORAGE_KEY)
+//   if (!bugs || !bugs.length) {
+//     bugs = [
+//       {
+//         title: 'Infinite Loop Detected',
+//         description: 'Problem in detected',
+//         severity: 4,
+//         _id: '1NF1N1T3',
+//         createdAt: 1719851845,
+//       },
+//       {
+//         title: 'Keyboard Not Found',
+//         description: 'Problem with keyboard not found',
+//         severity: 3,
+//         _id: 'K3YB0RD',
+//         createdAt: 1719851884,
+//       },
+//       {
+//         title: '404 Coffee Not Found',
+//         description: 'Problem 404 coffee not found',
+//         severity: 2,
+//         _id: 'C0FF33',
+//         createdAt: 1719851884,
+//       },
+//       {
+//         title: 'Unexpected Response',
+//         description: 'Problem with unexpected Response',
+//         severity: 1,
+//         _id: 'G0053',
+//         createdAt: 1719851925,
+//       },
+//     ]
+//     utilService.saveToStorage(STORAGE_KEY, bugs)
+//   }
+// }
 
-function _setNextPrevBugId(bug) {
-    return storageService.query(STORAGE_KEY).then((bugs) => {
-        const bugIdx = bugs.findIndex((currBug) => currBug._id === bug._id)
-        const nextBug = bugs[bugIdx + 1] ? bugs[bugIdx + 1] : bugs[0]
-        const prevBug = bugs[bugIdx - 1] ? bugs[bugIdx - 1] : bugs[bugs.length - 1]
-        bug.nextBugrId = nextBug._id
-        bug.prevBugId = prevBug._id
-        return bug
-    })
-}
+// function _setNextPrevBugId(bug) {
+//     return storageService.query(STORAGE_KEY).then((bugs) => {
+//         const bugIdx = bugs.findIndex((currBug) => currBug._id === bug._id)
+//         const nextBug = bugs[bugIdx + 1] ? bugs[bugIdx + 1] : bugs[0]
+//         const prevBug = bugs[bugIdx - 1] ? bugs[bugIdx - 1] : bugs[bugs.length - 1]
+//         bug.nextBugrId = nextBug._id
+//         bug.prevBugId = prevBug._id
+//         return bug
+//     })
+// }
