@@ -41,36 +41,21 @@ export function BugEdit() {
   const { title, description, severity } = bugToEdit
 
   return (
-    <section className="bug-edit">
+    <section className='bug-edit'>
       <h2>{bugToEdit._id ? 'Edit' : 'Add'} Bug</h2>
 
       <form onSubmit={onSaveBug}>
-        <label htmlFor="title">Title:</label>
-        <input
-          onChange={handleChange}
-          value={title}
-          type="text"
-          name="title"
-          id="title"
-        />
+        <label htmlFor='title'>Title:</label>
+        <input onChange={handleChange} value={title} type='text' name='title' id='title' />
 
-        <label htmlFor="description">Description:</label>
-        <input
-          onChange={handleChange}
-          value={description}
-          type="text"
-          name="description"
-          id="description"
-        />
+        <label htmlFor='description'>Description:</label>
+        <input onChange={handleChange} value={description} type='text' name='description' id='description' />
 
-        <label htmlFor="severity">Severity:</label>
-        <input
-          onChange={handleChange}
-          value={severity}
-          type="number"
-          name="severity"
-          id="severity"
-        />
+        <label htmlFor='severity'>Severity:</label>
+        <input onChange={handleChange} value={severity} type='number' name='severity' id='severity' />
+
+        {/* <label htmlFor='labels'>labels:</label>
+        <input onChange={handleChange} value={labels} type='text' name='labels' id='labels' /> */}
 
         <button>{bugToEdit._id ? 'Save' : 'Add'}</button>
       </form>

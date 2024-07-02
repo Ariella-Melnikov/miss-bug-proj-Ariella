@@ -55,7 +55,7 @@ function save(bug) {
 }
 
 function getEmptyBug() {
-  return { title: '', description: '', severity: 3 }
+  return { title: '', description: '', severity: 3, labels: [] }
 }
 
 function getDefaultFilter() {

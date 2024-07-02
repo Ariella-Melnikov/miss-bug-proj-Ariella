@@ -9,15 +9,23 @@ const app = express()
 //* Express Config:
 app.use(cookieParser())
 app.use(express.static('public'))
+app.use(express.json())
+
 
 //* Routes:
 
-// List
-
+// LIST - get bugs
 
 app.get('/api/bug', (req, res) => {
+  console.log('req.query:', req.query)
+
+  const filterBy = {
+    txt: req.query.txt,
+    severity: +req.query.severity,
+  }
+
   bugService
-    .query()
+    .query(filterBy)
     .then((bugs) => res.send(bugs))
     .catch((err) => {
       loggerService.error('Cannot get bugs', err)
@@ -25,31 +33,55 @@ app.get('/api/bug', (req, res) => {
     })
 })
 
-// Save - Create or Update
+// ADD bug
 
-app.get('/api/bug/save', (req, res) => {
+app.post('/api/bug', (req, res) => {
 
-  console.log('req.query:', req.query)
+  console.log('req.query:', req.body)
 
-  const { title, description, severity, _id } = req.query
 
-  const bug = {
-    _id,
-    title,
-    description,
-    severity: +severity,
+  const bugToSave = {
+    title: req.body.title,
+    description: req.body.description,
+    severity: +req.body.severity
 }
 
   bugService
-    .save(bug)
-    .then((saveBug) => res.send(saveBug))
+    .save(bugToSave)
+    .then(bug => res.send(bug))
     .catch((err) => {
       loggerService.error('Cannot save bug', err)
-      res.status(400).send('Cannot save bug', err)
+      res.status(500).send('Cannot save bug', err)
     })
 })
 
-// Read
+//  Update bug
+
+app.put('/api/bug', (req, res) => {
+
+  console.log('req.query:', req.body)
+
+  // const { title, description, severity, _id, createdAt, labels } = req.query
+
+  const bugToSave = {
+    _id: req.body._id,
+    title: req.body.title,
+    description: req.body.description,
+    severity: +req.body.severity,
+    // createdAt: Date.now(),
+    // labels,
+}
+
+  bugService
+    .save(bugToSave)
+    .then(bug => res.send(bug))
+    .catch((err) => {
+      loggerService.error('Cannot save bug', err)
+      res.status(500).send('Cannot save bug', err)
+    })
+})
+
+// Read- get bug
 
 app.get('/api/bug/:bugId', (req, res) => {
 
@@ -58,40 +90,45 @@ app.get('/api/bug/:bugId', (req, res) => {
     const { bugId } = req.params
     // console.log('bugId:', bugId)
 
-    const { visitedBugs = [] } = req.cookies // use the default if undefined
-    console.log('visitedBugs:', visitedBugs)
+  //   const { visitedBugs = [] } = req.cookies 
+  //   console.log('visitedBugs:', visitedBugs)
 
-    if (!visitedBugs.includes(bugId)) {
-      if (visitedBugs.length >= 3) return res.status(401).send('Wait for a bit')
-      else visitedBugs.push(bugId)
-  }
+  //   if (!visitedBugs.includes(bugId)) {
+  //     if (visitedBugs.length >= 3) return res.status(401).send('Wait for a bit')
+  //     else visitedBugs.push(bugId)
+  // }
 
-  res.cookie('visitedBugs', visitedBugs, { maxAge: 1000 * 70 })
-  console.log('visitedBugs:', visitedBugs)
+  // res.cookie('visitedBugs', visitedBugs, { maxAge: 1000 * 70 })
+  // console.log('visitedBugs:', visitedBugs)
 
     bugService.getById(bugId)
         .then(bug => res.send(bug))
         .catch((err) => {
             loggerService.error('Cannot get bug', err)
-            res.status(400).send('Cannot get bug')
+            res.status(500).send('Cannot get bug')
         })
 })
 
-// Delete
+// DELETE - remove bug
 
-app.get('/api/bug/:bugId/remove', (req, res) => {
-    // console.log('req.params:', req.params)
+
+app.delete('/api/bug/:bugId', (req, res) => {
+
+    console.log('req.params:', req.params)
+    console.log('Delete...')
+
     const { bugId } = req.params
     bugService.remove(bugId)
-        .then(() => {
-          loggerService.info(`Bug ${bugId} removed`)
-          res.send('Removed!')
-        }) .catch((err) => {
+        .then(() =>  res.send(`Bug (${bugId}) removed!`))
+           .catch((err) => {
             loggerService.error('Cannot remove bug', err)
             res.status(400).send('Cannot remove bug', err)
         })
 
 })
+
+////////////////////////////////////////////////////
+
 
 const port = 3030
 app.listen(port, () => loggerService.info((`Server listening on port http://127.0.0.1:${port}/`))

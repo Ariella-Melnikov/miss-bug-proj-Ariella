@@ -1,43 +1,63 @@
 [
   {
-    "_id": "aeIEc",
-    "title": "lalalal",
-    "description": "lalallalalalalalallaa",
-    "severity": 5
+    "title": "lolau",
+    "description": "lola is a nasty smelly",
+    "severity": 2,
+    "_id": "ndnAx"
   },
   {
     "_id": "abc123",
     "title": "Cannot save a new car",
     "description": "problem when clicking Save",
     "severity": 3,
-    "createdAt": 1542107359454
+    "createdAt": 1542107359454,
+    "labels": [
+      "high-priority",
+      "backend"
+    ]
   },
   {
     "title": "Infinite Loop Detected",
     "description": "problem with Infinite Loop",
     "severity": 4,
     "_id": "1NF1N1T3",
-    "createdAt": 1542107359454
+    "createdAt": 1542107359454,
+    "labels": [
+      "critical",
+      "performance"
+    ]
   },
   {
     "title": "Keyboard Not Found",
     "severity": 3,
     "description": "problem Keyboard Not Found",
     "_id": "K3YB0RD",
-    "createdAt": 1542107359454
+    "createdAt": 1542107359454,
+    "labels": [
+      "medium-priority",
+      "hardware"
+    ]
   },
   {
     "title": "404 Coffee Not Found",
     "description": "problem page Not Found",
     "severity": 2,
     "_id": "C0FF33",
-    "createdAt": 1542107359454
+    "createdAt": 1542107359454,
+    "labels": [
+      "low-priority",
+      "website"
+    ]
   },
   {
     "title": "Unexpected Response",
     "description": "problem Unexpected Response",
     "severity": 1,
     "_id": "G0053",
-    "createdAt": 1542107359454
+    "createdAt": 1542107359454,
+    "labels": [
+      "medium-priority",
+      "API"
+    ]
   }
 ]
