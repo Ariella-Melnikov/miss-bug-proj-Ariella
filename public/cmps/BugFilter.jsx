@@ -1,17 +1,52 @@
-const {useState, useEffect} = React
+import { utilService } from "../services/util.service.js"
+
+const {useState, useEffect, useRef} = React
 
 export function BugFilter({filterBy, onSetFilter}) {
-  const [filterByToEdit, setFilterByToEdit] = useState(filterBy)
+  const [filterByToEdit, setFilterByToEdit] = useState({ ...filterBy })
+  const onSetFilterDebounce = useRef(utilService.debounce(onSetFilter, 300))
 
   useEffect(() => {
-    onSetFilter(filterByToEdit)
+    onSetFilterDebounce.current(filterByToEdit)
   }, [filterByToEdit])
 
-  function handleChange({target}) {
-    const field = target.name
-    const value = target.type === 'number' ? +target.value || '' : target.value
-    setFilterByToEdit((prevFilterBy) => ({...prevFilterBy, [field]: value}))
+//   function handleChange({target}) {
+//     const field = target.name
+//     let value = target.value
+
+//     switch (target.type) {
+//       case 'number':
+//       case 'range':
+//           value = +value
+//           break;
+
+//       case 'checkbox':
+//           value = target.checked
+//           break
+
+//       default:
+//           break;
+//   }
+
+//   setFilterByToEdit(prevFilter => ({ ...prevFilter, [field]: value }))
+// }
+
+function handleChange({ target }) {
+  const { name, value, type, checked } = target;
+
+  // Handle different input types
+  let updatedValue = value;
+  if (type === 'number' || type === 'range') {
+    updatedValue = +value; // Convert to number
+  } else if (type === 'checkbox') {
+    updatedValue = checked; // Use checked state for checkbox
   }
+
+  setFilterByToEdit(prevFilter => ({
+    ...prevFilter,
+    [name]: updatedValue
+  }));
+}
 
   function onSubmitFilter(ev) {
     ev.preventDefault()
@@ -29,34 +64,34 @@ export function BugFilter({filterBy, onSetFilter}) {
   //     setFilterByToEdit((prevFilterBy) => ({ ...prevFilterBy, minSpeed: value }))
   // }
 
-  const {txt, severity} = filterByToEdit
+  const {txt, minSeverity} = filterByToEdit
   return (
     <section className="bug-filter full main-layout">
       <h2>Filter Our Bugs</h2>
 
       <form onSubmit={onSubmitFilter}>
-        <label htmlFor="txt">Search:</label>
+        <label htmlFor="txt">Title:</label>
         <input
           value={txt}
           onChange={handleChange}
           name="txt"
           id="txt"
           type="text"
-          placeholder="By Text"
+          placeholder="By Title"
         />
 
-        <label htmlFor="severity">Severity:</label>
+        <label htmlFor="minSeverity">Severity:</label>
         <input
-          value={severity}
+          value={minSeverity}
           onChange={handleChange}
           type="number"
-          name="severity"
-          id="severity"
-          placeholder="By Severity"
+          name="minSeverity"
+          id="minSeverity"
+          placeholder="By minSeverity"
         />
 
-        <button>Filter Bugs</button>
+        <button type="submit">Filter Bugs</button>
       </form>
     </section>
-  )
+  );
 }

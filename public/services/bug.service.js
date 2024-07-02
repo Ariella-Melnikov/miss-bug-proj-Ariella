@@ -13,45 +13,42 @@ export const bugService = {
   remove,
   getEmptyBug,
   getDefaultFilter,
+  getFilterFromSearchParams
 }
 
 function query(filterBy = {}) {
-  return axios
-    .get(BASE_URL)
-    .then((res) => res.data)
-    .then((bugs) => {
-      if (filterBy.txt) {
-        const regExp = new RegExp(filterBy.txt, 'i')
-        bugs = bugs.filter((bug) => regExp.test(bug.title) || regExp.test(bug.description))
-      }
+  return axios.get(BASE_URL, { params: filterBy })
+    .then(res => res.data)
+    // .then((bugs) => {
+    //   if (filterBy.txt) {
+    //     const regExp = new RegExp(filterBy.txt, 'i')
+    //     bugs = bugs.filter((bug) => regExp.test(bug.title) || regExp.test(bug.description))
+    //   }
 
-      if (filterBy.severity) {
-        bugs = bugs.filter((bug) => bug.severity >= filterBy.severity)
-      }
-      return bugs
-    })
+    //   if (filterBy.minSeverity) {
+    //     bugs = bugs.filter((bug) => bug.severity >= filterBy.minSeverity)
+    //   }
+    //   return bugs
+    // })
 }
 
 function get(bugId) {
   return axios
     .get(BASE_URL + bugId)
-    .then((res) => res.data)
-    // .then((bug) => _setNextPrevBugId(bug))
+    .then(res => res.data)
+    .then((bug) => _setNextPrevBugId(bug))
 }
 
 function remove(bugId) {
-  return axios.get(BASE_URL + bugId + '/remove').then((res) => res.data)
+  return axios.delete(BASE_URL + bugId ).then((res) => res.data)
 }
 
 function save(bug) {
-  const url = BASE_URL + 'save'
-
-  const { title, description, severity } = bug
-  const queryParams = { title, description, severity }
-
-  if (bug._id) queryParams._id = bug._id
-
-  return axios.get(url, { params: queryParams })
+  if (bug._id){
+    return axios.put(BASE_URL, bug)
+  } else {
+    return axios.post(BASE_URL, bug)
+  }
 }
 
 function getEmptyBug() {
@@ -59,17 +56,28 @@ function getEmptyBug() {
 }
 
 function getDefaultFilter() {
-  return { txt: '', severity: '' }
+  return { txt: '', minSeverity: '' }
 }
 
-// function getFilterFromSearchParams(searchParams) {
-//   const txt = searchParams.get('txt') || ''
-//   const minSpeed = searchParams.get('minSeverity') || ''
-//   return {
-//     txt,
-//     minSeverity,
-//   }
-// }
+function getFilterFromSearchParams(searchParams) {
+  const txt = searchParams.get('txt') || ''
+  const minSeverity = searchParams.get('minSeverity') || ''
+  return {
+    txt,
+    minSeverity,
+  }
+}
+
+function _setNextPrevBugId(bug) {
+  return storageService.query(STORAGE_KEY).then((bugs) => {
+    const bugIdx = bugs.findIndex((currBug) => currBug._id === bug._id)
+    const nextBug = bugs[bugIdx + 1] ? bugs[bugIdx + 1] : bugs[0]
+    const prevBug = bugs[bugIdx - 1] ? bugs[bugIdx - 1] : bugs[bugs.length - 1]
+    bug.nextBugrId = nextBug._id
+    bug.prevBugId = prevBug._id
+    return bug
+  })
+}
 
 // function _createBugs() {
 //   let bugs = utilService.loadFromStorage(STORAGE_KEY)
@@ -90,16 +98,7 @@ function getDefaultFilter() {
 //   return bug
 // }
 
-// function _setNextPrevBugId(bug) {
-//   return storageService.query(STORAGE_KEY).then((bugs) => {
-//     const bugIdx = bugs.findIndex((currBug) => currBug._id === bug._id)
-//     const nextBug = bugs[bugIdx + 1] ? bugs[bugIdx + 1] : bugs[0]
-//     const prevBug = bugs[bugIdx - 1] ? bugs[bugIdx - 1] : bugs[bugs.length - 1]
-//     bug.nextBugrId = nextBug._id
-//     bug.prevBugId = prevBug._id
-//     return bug
-//   })
-// }
+
 
 // function _createBugs() {
 //   let bugs = utilService.loadFromStorage(STORAGE_KEY)

@@ -26,8 +26,23 @@ export function BugEdit() {
 
   function handleChange({ target }) {
     const field = target.name
-    const value = target.type === 'number' ? +target.value || '' : target.value
-    setBugToEdit((prevBug) => ({ ...prevBug, [field]: value }))
+    let value = target.value
+
+    switch (target.type) {
+      case 'number':
+      case 'range':
+          value = +value
+          break;
+
+      case 'checkbox':
+          value = target.checked
+          break
+
+      default:
+          break;
+  }
+
+    setBugToEdit(prevBug => ({ ...prevBug, [field]: value }))
   }
 
   function onSaveBug(ev) {
@@ -35,6 +50,7 @@ export function BugEdit() {
     ev.preventDefault()
     bugService.save(bugToEdit).then(() => {
       navigate('/bug')
+      showSuccessMsg(`Bug saved successfully!`)
     })
   }
 

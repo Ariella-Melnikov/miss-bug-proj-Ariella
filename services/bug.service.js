@@ -11,24 +11,27 @@ export const bugService = {
   save,
 }
 
+const PAGE_SIZE = 2
 const bugs = utilService.readJsonFile('data/bug.json')
 
-// function query(filterBy = {}) {
-//   return Promise.resolve(bugs).then((bugs) => {
-//     if (filterBy.txt) {
-//       const regExp = new RegExp(filterBy.txt, 'i')
-//       bugs = bugs.filter((bug) => regExp.test(bug.title))
-//     }
-//     if (filterBy.minSeverity) {
-//       bugs = bugs.filter((bug) => bug.severity >= filterBy.minSeverity)
-//     }
-//     return bugs
-//   })
-// }
-
-function query() {
+function query(filterBy = {}) {
   return Promise.resolve(bugs)
+  .then(bugs => {
+    if (filterBy.txt) {
+      const regExp = new RegExp(filterBy.txt, 'i')
+      bugs = bugs.filter(bug => regExp.test(bug.title))
+    }
+    if (filterBy.minSeverity) {
+      bugs = bugs.filter(bug => bug.severity >= filterBy.minSeverity)
+    }
+    if (filterBy.pageIdx !== undefined) {
+      const startIdx = filterBy.pageIdx * PAGE_SIZE // 0 , 3
+      bugs = bugs.slice(startIdx, startIdx + PAGE_SIZE)
+  }
+    return bugs
+  })
 }
+
 
 function getById(bugId) {
   const bug = bugs.find((bug) => bug._id === bugId)

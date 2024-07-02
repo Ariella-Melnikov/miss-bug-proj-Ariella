@@ -5,7 +5,8 @@ export const utilService = {
     loadFromStorage,
     saveToStorage,
     animateCSS,
-    debounce
+    debounce,
+    throttle
 }
 
 function makeId(length = 6) {
@@ -47,15 +48,27 @@ function saveToStorage(keyDB, val) {
     localStorage.setItem(keyDB, valStr)
 }
 
-function debounce(func, delay) {
-    let timeoutId
-    return (...args) => {
-        clearTimeout(timeoutId)
-        timeoutId = setTimeout(() => {
-            func(...args)
-        }, delay)
+function debounce(fn, wait) {
+    let timerId
+    return function (...args) {
+        if (timerId) clearTimeout(timerId)
+        timerId = setTimeout(() => {
+            fn.apply(this, args)
+        }, wait)
     }
 }
+
+function throttle(fn, wait) {
+    let timerId
+    return function (...args) {
+        if (timerId) return
+        timerId = setTimeout(() => {
+            fn.apply(this, args)
+            timerId = undefined
+        }, wait)
+    }
+}
+
 
 
 function animateCSS(el, animation = 'bounce', isRemoveClass = true) {

@@ -22,11 +22,11 @@ app.get('/api/bug', (req, res) => {
   const filterBy = {
     txt: req.query.txt,
     severity: +req.query.severity,
+    pageIdx: req.query.pageIdx
   }
 
-  bugService
-    .query(filterBy)
-    .then((bugs) => res.send(bugs))
+  bugService.query(filterBy)
+    .then(bugs => res.send(bugs))
     .catch((err) => {
       loggerService.error('Cannot get bugs', err)
       res.status(500).send('Cannot get bugs')
